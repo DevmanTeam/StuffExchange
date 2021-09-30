@@ -1,35 +1,44 @@
 from django.http import HttpResponse
 from django.contrib.auth import views as auth_views
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from .forms import LoginForm, UserRegistrationForm, AddGoodForm, GalleryForm
 from django.forms import formset_factory
 
+from .models import Good, ExchangeFromUserToUser, CustomUser, Gallery
+
 
 def show_goods(request):
-    goods = [{'title': 'Стул', 'description': 'Почти новый стул из красного дуба', 'user': 'Сергей К.'}, {'title': 'Стол', 'description': 'Почти новый стол из желтой сосны', 'user': 'Галина М.'},{'title': 'Стул', 'description': 'Почти новый стул из красного дуба', 'user': 'Сергей К.'},{'title': 'Стул', 'description': 'Почти новый стул из красного дуба', 'user': 'Сергей К.'},{'title': 'Стул', 'description': 'Почти новый стул из красного дуба', 'user': 'Сергей К.'},{'title': 'Стул', 'description': 'Почти новый стул из красного дуба', 'user': 'Сергей К.'},]
-    # goods = []
+    goods = Good.objects.all()
     return render(request, 'goods.html', {'goods': goods})
 
 
-def show_good(request):
-    return HttpResponse('<h1>Это страница вещи!</h1>')
+def show_good(request, good_id):
+    good = Good.objects.filter(id=good_id).first()
+    images = Gallery.objects.filter(good=good)
+    return render(request, 'good.html', {'good': good, 'images': images})
 
 
 def show_user(request, user_id):
-    user = {'username': 'Starcoding'}
-    goods = [{'title': 'Стул', 'description': 'Почти новый стул из красного дуба', 'user': 'Сергей К.'}, {'title': 'Стол', 'description': 'Почти новый стол из желтой сосны', 'user': 'Галина М.'},{'title': 'Стул', 'description': 'Почти новый стул из красного дуба', 'user': 'Сергей К.'},{'title': 'Стул', 'description': 'Почти новый стул из красного дуба', 'user': 'Сергей К.'},{'title': 'Стул', 'description': 'Почти новый стул из красного дуба', 'user': 'Сергей К.'},{'title': 'Стул', 'description': 'Почти новый стул из красного дуба', 'user': 'Сергей К.'},]
+    user = CustomUser.objects.filter(id=user_id).first()
+    goods = Good.objects.filter(user=user)
     return render(request, 'user_goods.html', {'goods': goods, 'user': user})
 
 
-def create_exchange(request): # Юра
-    return HttpResponse('<h1>Здесь создаём предложение для обмена вещи!</h1>')
+def create_exchange(request, user_id, good_id): # Юра
+    from_user = CustomUser.objects.filter(id=request.user.id).first()
+    to_user = CustomUser.objects.filter(id=user_id).first()
+    if from_user == to_user:
+        return HttpResponse('Извините, но самому себе нельзя делать предложение об обмене:)') #Временная заглушка
+    good = Good.objects.filter(id=good_id).first()
+    exchange, created = ExchangeFromUserToUser.objects.get_or_create(from_user=from_user, to_user=to_user, good=good)
+    print(exchange, created)
+    return redirect('/offers')
 
 
 def show_offers(request): # Юра
-    goods = [{'title': 'Стул', 'description': 'Почти новый стул из красного дуба', 'user': 'Сергей К.'}, {'title': 'Стол', 'description': 'Почти новый стол из желтой сосны', 'user': 'Галина М.'},{'title': 'Стул', 'description': 'Почти новый стул из красного дуба', 'user': 'Сергей К.'},{'title': 'Стул', 'description': 'Почти новый стул из красного дуба', 'user': 'Сергей К.'},{'title': 'Стул', 'description': 'Почти новый стул из красного дуба', 'user': 'Сергей К.'},{'title': 'Стул', 'description': 'Почти новый стул из красного дуба', 'user': 'Сергей К.'},]
-    # goods = []
-    return render(request, 'offers.html', {'goods': goods})
+    offers = ExchangeFromUserToUser.objects.filter(from_user=request.user)
+    return render(request, 'offers.html', {'offers': offers})
 
 
 def user_login(request):

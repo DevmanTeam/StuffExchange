@@ -1,17 +1,18 @@
 {% extends "base_page.html" %}
 {% block content %}
 <h1 class="m-3">Предложения на обмен</h1>
-{% if goods %}
+{% if offers %}
 <div class="row justify-content-center">
-  {% for good in goods %}
+  {% for offer in offers %}
   
     <div class="card col-3 m-3" style="width: 18rem;">
       <img src="https://www.ikea.com/ru/ru/images/products/brimnes-pismennyy-stol-belyy__0924822_pe788641_s5.jpg?f=xl" class="card-img-top" alt="...">
       <div class="card-body">
-        <h5 class="card-title m-1">{{ good.title }}</h5>
-        <p class="card-text m-1">{{ good.description }}</p>
-        <p class="card-text m-1">Обмен предлагает:<a href="#" class="card-link m-1">{{ good.user }}</a></p>
-        <p class="card-text m-1">{{ good.user.communication_contact }}</p>
+        <h5 class="card-title m-1">{{ offer.good.title }}</h5>
+        <p class="card-text text-secondary m-1">{{ offer.good.category }}</p>
+        <p class="card-text m-1">Описание: {{ offer.good.description }}</p>
+        <p class="card-text m-1">Обмен предлагает:<a href="#" class="card-link m-1">{{ offer.good.user }}</a></p>
+        <p class="card-text m-1">Контакты: {{ offer.good.user.communication_contact }}</p>
       </div>
     </div>
 
