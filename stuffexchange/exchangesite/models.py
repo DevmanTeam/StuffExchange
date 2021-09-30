@@ -35,6 +35,7 @@ class Good(models.Model):
                                 choices=CATEGORY_CHOICES,
                                 db_index=True)
     title = models.CharField('название вещи', max_length=100)
+    description = models.TextField('описание товара', max_length=500, blank=True)
     user = models.ForeignKey(CustomUser,
                              on_delete=models.CASCADE,
                              related_name='goods',
