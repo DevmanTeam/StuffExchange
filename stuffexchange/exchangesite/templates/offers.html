@@ -1,8 +1,6 @@
 {% extends "base_page.html" %}
 {% block content %}
-{% if user %}
-<h1 class="m-3">{{ user.username }}</h1>
-{% endif %}
+<h1 class="m-3">Предложения на обмен</h1>
 {% if goods %}
 <div class="row justify-content-center">
   {% for good in goods %}
@@ -11,9 +9,9 @@
       <img src="https://www.ikea.com/ru/ru/images/products/brimnes-pismennyy-stol-belyy__0924822_pe788641_s5.jpg?f=xl" class="card-img-top" alt="...">
       <div class="card-body">
         <h5 class="card-title m-1">{{ good.title }}</h5>
-        <p class="card-text m-1">{{ good.description }}</p> 
-        <a href="#" class="btn btn-primary m-1">Предложить обмен</a>
-
+        <p class="card-text m-1">{{ good.description }}</p>
+        <p class="card-text m-1">Обмен предлагает:<a href="#" class="card-link m-1">{{ good.user }}</a></p>
+        <p class="card-text m-1">{{ good.user.communication_contact }}</p>
       </div>
     </div>
 

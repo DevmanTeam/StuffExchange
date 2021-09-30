@@ -1,11 +1,15 @@
 {% extends "base_page.html" %}
 {% block content %}
-<h1>Добавление товара</h1>
-    <p>Заполните поля ниже для добавления товара</p>
-    <form action="." method="post">
-        {{ good_form.as_p }}
-        {{ image_form.as_p }}
-        {% csrf_token %}
-        <p><input type="submit" value="Добавить"></p>
-    </form>
+<h1 class="m-3">Добавление товара</h1>
+<div class="row justify-content-center">
+    <div class="col-md-6 p-3">
+        <p>Заполните поля ниже для добавления товара</p>
+        <form action="." method="post">
+            {{ good_form.as_p }}
+            {{ image_form.as_p }}
+            {% csrf_token %}
+            <p><input type="submit" value="Добавить"></p>
+        </form>
+    </div>
+</div>
 {% endblock %}
