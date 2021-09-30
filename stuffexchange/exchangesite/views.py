@@ -7,7 +7,9 @@ from django.forms import formset_factory
 
 
 def show_goods(request):
-    return HttpResponse('<h1>Это главная страница!</h1>')
+    goods = [{'title': 'Стул', 'description': 'Почти новый стул из красного дуба', 'owner': 'Сергей К.'}, {'title': 'Стол', 'description': 'Почти новый стол из желтой сосны', 'owner': 'Галина М.'},{'title': 'Стул', 'description': 'Почти новый стул из красного дуба', 'owner': 'Сергей К.'},{'title': 'Стул', 'description': 'Почти новый стул из красного дуба', 'owner': 'Сергей К.'},{'title': 'Стул', 'description': 'Почти новый стул из красного дуба', 'owner': 'Сергей К.'},{'title': 'Стул', 'description': 'Почти новый стул из красного дуба', 'owner': 'Сергей К.'},]
+    # goods = []
+    return render(request, 'goods.html', {'goods': goods})
 
 
 def show_good(request):
@@ -18,11 +20,11 @@ def show_user(request):
     return HttpResponse('<h1>Это страница юзера с товарами!</h1>')
 
 
-def create_exchange(request):
+def create_exchange(request): # Юра
     return HttpResponse('<h1>Здесь создаём предложение для обмена вещи!</h1>')
 
 
-def show_offers(request):
+def show_offers(request): # Юра
     return HttpResponse('<h1>Здесь показываем какие у нас есть предложения по обмену вещей!</h1>')
 
 

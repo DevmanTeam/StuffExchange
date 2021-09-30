@@ -1,3 +1,5 @@
+{% extends "base_page.html" %}
+{% block content %}
 <h1>Create an account</h1>
 <p>Please, sign up using the following form:</p>
 <form action="." method="post">
@@ -5,3 +7,4 @@
     {% csrf_token %}
     <p><input type="submit" value="Create my account"></p>
 </form>
+{% endblock %}

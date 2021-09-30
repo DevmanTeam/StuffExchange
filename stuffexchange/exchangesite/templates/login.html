@@ -1,3 +1,5 @@
+{% extends "base_page.html" %}
+{% block content %}
 <h1>Log-in</h1>
     <p>Please, use the following form to log-in:</p>
     <form action="." method="post">
@@ -5,3 +7,4 @@
         {% csrf_token %}
         <p><input type="submit" value="Log-in"></p>
     </form>
+{% endblock %}

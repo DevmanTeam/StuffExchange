@@ -1,0 +1,22 @@
+{% extends "base_page.html" %}
+{% block content %}
+<h1>Вещи на обмен</h1>
+{% if goods %}
+<div class="row">
+  {% for good in goods %}
+  
+    <div class="card col-3 m-3" style="width: 18rem;">
+      <img src="https://www.ikea.com/ru/ru/images/products/brimnes-pismennyy-stol-belyy__0924822_pe788641_s5.jpg?f=xl" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title m-1">{{ good.title }}</h5>
+        <p class="card-text m-1">{{ good.description }}</p> 
+        <a href="#" class="card-link m-1">{{ good.owner }}</a>
+        <a href="#" class="btn btn-primary m-1">Предложить обмен</a>
+
+      </div>
+    </div>
+
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,3 +1,5 @@
+{% extends "base_page.html" %}
+{% block content %}
 <h1>Добавление товара</h1>
     <p>Заполните поля ниже для добавления товара</p>
     <form action="." method="post">
@@ -6,3 +8,4 @@
         {% csrf_token %}
         <p><input type="submit" value="Добавить"></p>
     </form>
+{% endblock %}
