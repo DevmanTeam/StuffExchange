@@ -1,5 +1,5 @@
 from django import forms
-from .models import CustomUser
+from .models import CustomUser, Good, Gallery
 
 
 class LoginForm(forms.Form):
@@ -20,3 +20,18 @@ class UserRegistrationForm(forms.ModelForm):
         if cd['password'] != cd['password2']:
             raise forms.ValidationError('Passwords don\'t match.')
         return cd['password2']
+
+
+class AddGoodForm(forms.ModelForm):
+
+    class Meta:
+        model = Good
+        fields = ('category', 'title')
+
+
+class GalleryForm(forms.ModelForm):
+
+    class Meta:
+        model = Gallery
+        fields = ('image',)
+

@@ -50,7 +50,7 @@ class Good(models.Model):
 
 class Gallery(models.Model):
 
-    image = models.ImageField('фото товара')
+    image = models.ImageField('фото товара', null=True, blank=True)
     good = models.ForeignKey(Good,
                              on_delete=models.CASCADE,
                              related_name='images',

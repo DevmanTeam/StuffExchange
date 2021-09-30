@@ -2,7 +2,8 @@ from django.http import HttpResponse
 from django.contrib.auth import views as auth_views
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
-from .forms import LoginForm, UserRegistrationForm
+from .forms import LoginForm, UserRegistrationForm, AddGoodForm, GalleryForm
+from django.forms import formset_factory
 
 
 def show_goods(request):
@@ -55,3 +56,17 @@ def register(request):
     else:
         user_form = UserRegistrationForm()
     return render(request, 'register.html', {'user_form': user_form})
+
+
+def add_good(request):
+    if request.method == 'POST':
+        good_form = AddGoodForm(request.POST)
+        gallery_form_set = formset_factory(GalleryForm, extra=5)
+        image_form = gallery_form_set(request.POST)
+    else:
+        good_form = AddGoodForm()
+        gallery_form_set = formset_factory(GalleryForm, extra=5)
+        image_form = gallery_form_set()
+
+    return render(request, 'add_good.html', {'good_form': good_form,
+                                             'image_form': image_form})
