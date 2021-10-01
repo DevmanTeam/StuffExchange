@@ -3,7 +3,6 @@ from django.db import models
 
 
 class CustomUser(AbstractUser):
-
     communication_contact = models.CharField('контакт для связи', max_length=100)
 
     class Meta:

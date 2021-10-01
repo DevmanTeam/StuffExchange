@@ -15,5 +15,5 @@ urlpatterns = [
     path('exchange/<int:user_id>-<int:good_id>', create_exchange, name='exchange'),
     path('login/', user_login, name='login'),
     path('register/', register, name='register'),
-    path('add_good', add_good, name='add_good')
+    path('add_good/', add_good, name='add_good')
 ]

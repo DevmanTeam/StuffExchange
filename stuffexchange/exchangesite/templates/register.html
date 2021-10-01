@@ -1,13 +1,13 @@
 {% extends "base_page.html" %}
 {% block content %}
-<h1 class="m-3">Create an account</h1>
+<h1 class="m-3">Создание аккаунта</h1>
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <p>Please, sign up using the following form:</p>
+            <p>Пожалуйста, заполните следующие поля:</p>
             <form action="." method="post">
                 {{ user_form.as_p }}
                 {% csrf_token %}
-                <p><input type="submit" value="Create my account"></p>
+                <p><input type="submit" value="Создать аккаунт"></p>
             </form>
         </div>
     </div>
