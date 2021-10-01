@@ -32,8 +32,6 @@ def show_user(request, user_id):
 def create_exchange(request, user_id, good_id): # Юра
     from_user = CustomUser.objects.filter(id=request.user.id).first()
     to_user = CustomUser.objects.filter(id=user_id).first()
-    if from_user == to_user:
-        return HttpResponse('Извините, но самому себе нельзя делать предложение об обмене:)') #Временная заглушка (можно убирать)
     good = Good.objects.filter(id=good_id).first()
     exchange, created = ExchangeFromUserToUser.objects.get_or_create(from_user=from_user, to_user=to_user, good=good)
     print(exchange, created)
@@ -41,7 +39,7 @@ def create_exchange(request, user_id, good_id): # Юра
 
 
 def show_offers(request): # Юра
-    offers = ExchangeFromUserToUser.objects.filter(from_user=request.user)
+    offers = ExchangeFromUserToUser.objects.filter(to_user=request.user)
     return render(request, 'offers.html', {'offers': offers})
 
 
