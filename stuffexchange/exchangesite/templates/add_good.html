@@ -6,7 +6,7 @@
         <p>Заполните поля ниже для добавления товара</p>
         <form action="." method="post" enctype="multipart/form-data">
             {{ good_form.as_p }}
-            {{ image_form.as_p }}
+            {{ image_formset.as_p }}
             {% csrf_token %}
             <p><input type="submit" value="Добавить товар"></p>
         </form>

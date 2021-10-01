@@ -45,7 +45,7 @@ def show_offers(request): # Юра
 
 def logout_view(request):
     logout(request)
-    return render(request, 'logged_out.html')
+    return redirect('exchangesite:index')
 
 
 def user_login(request):
@@ -80,6 +80,24 @@ def register(request):
     return render(request, 'register.html', {'user_form': user_form})
 
 
+def update_good(request, good_id):
+
+    if request.method == 'GET':
+
+        good = Good.objects.get(id=good_id)
+        good_form = AddGoodForm(instance=good)
+        images_form = []
+        for image in good.images.all():
+            image_form = GalleryForm(instance=image)
+            images_form.append(image_form)
+        while len(images_form) < 5:
+            images_form.append(GalleryForm())
+        # gallery_form_set = formset_factory(GalleryForm, extra=5)
+        # image_form = gallery_form_set()
+        return render(request, 'update_good.html', {'good_form': good_form,
+                                                    'images_form': images_form})
+
+
 def add_good(request):
 
     if request.method == 'POST':
@@ -97,11 +115,11 @@ def add_good(request):
                 if cd_image:
                     Gallery.objects.create(image=cd_image['image'],
                                            good=new_good)
-        return redirect('exchangesite:index')
+        return redirect('exchangesite:user', user_id=request.user.id)
     else:
         good_form = AddGoodForm()
         gallery_form_set = formset_factory(GalleryForm, extra=5)
-        image_form = gallery_form_set()
+        image_formset = gallery_form_set()
 
     return render(request, 'add_good.html', {'good_form': good_form,
-                                             'image_form': image_form})
+                                             'image_formset': image_formset})

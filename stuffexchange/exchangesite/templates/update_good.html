@@ -1,0 +1,17 @@
+{% extends "base_page.html" %}
+{% block content %}
+<h1 class="m-3">Изменение товара</h1>
+<div class="row justify-content-center">
+    <div class="col-md-6 p-3">
+        <p>Заполните поля ниже для изменения товара</p>
+        <form action="." method="post" enctype="multipart/form-data">
+            {{ good_form.as_p }}
+            {% for image_form in images_form %}
+                {{ image_form.as_p }}
+            {% endfor %}
+            {% csrf_token %}
+            <p><input type="submit" value="Обновить товар"></p>
+        </form>
+    </div>
+</div>
+{% endblock %}
