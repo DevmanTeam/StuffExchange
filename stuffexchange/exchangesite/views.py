@@ -96,6 +96,14 @@ def update_good(request, good_id):
         # image_form = gallery_form_set()
         return render(request, 'update_good.html', {'good_form': good_form,
                                                     'images_form': images_form})
+    else:
+        good = Good.objects.get(id=good_id)
+        good_form = AddGoodForm(request.POST, instance=good)
+        gallery_form_set = formset_factory(GalleryForm, extra=5)
+        image_formset = gallery_form_set(request.POST, request.FILES)
+        if good_form.is_valid() :
+            new_good = good_form.save()
+            return redirect('exchangesite:good', good_id=good_id)
 
 
 def add_good(request):
