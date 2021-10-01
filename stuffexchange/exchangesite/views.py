@@ -1,9 +1,9 @@
 from django.http import HttpResponse
-from django.contrib.auth import views as auth_views
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from .forms import LoginForm, UserRegistrationForm, AddGoodForm, GalleryForm
 from django.forms import formset_factory
+from django.contrib.auth.views import LoginView
 
 from .models import Good, ExchangeFromUserToUser, CustomUser, Gallery
 
@@ -43,6 +43,11 @@ def create_exchange(request, user_id, good_id): # Юра
 def show_offers(request): # Юра
     offers = ExchangeFromUserToUser.objects.filter(from_user=request.user)
     return render(request, 'offers.html', {'offers': offers})
+
+
+def logout_view(request):
+    logout(request)
+    return render(request, 'logged_out.html')
 
 
 def user_login(request):
