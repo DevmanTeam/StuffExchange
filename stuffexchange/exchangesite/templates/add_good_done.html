@@ -1,0 +1,6 @@
+{% extends "base_page.html" %}
+{% block title %}Добавление товара выполнено{% endblock %}
+{% block content %}
+    <h1>Поздравляю, добавление товара выполнено!</h1>
+    <p>Вы успешно добавили товар. Для просмотра всех ваших товаров перейдите в свой <a href="{% url 'exchangesite:user' user_id=user.id %}">профиль</a>.</p>
+{% endblock %}

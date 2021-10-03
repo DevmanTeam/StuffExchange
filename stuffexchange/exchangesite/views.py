@@ -3,17 +3,20 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from .forms import LoginForm, UserRegistrationForm, AddGoodForm, GalleryForm
 from django.forms import formset_factory
-from django.contrib.auth.views import LoginView
 
 from .models import Good, ExchangeFromUserToUser, CustomUser, Gallery
 
 
 def show_goods(request):
-    goods = Good.objects.exclude(user__id=request.user.id)
+    if request.user.is_authenticated:
+        goods = Good.objects.exclude(user__id=request.user.id)
+    else:
+        goods = Good.objects.all()
     goods_to_image = {}
     for good in goods:
-        image_url = good.images.first().image.url
-        goods_to_image[good] = image_url
+        if good.images.all():
+            image_url = good.images.first().image.url
+            goods_to_image[good] = image_url
     return render(request, 'goods.html', {'goods_to_image': goods_to_image})
 
 
@@ -90,8 +93,8 @@ def update_good(request, good_id):
         for image in good.images.all():
             image_form = GalleryForm(instance=image)
             images_form.append(image_form)
-        while len(images_form) < 5:
-            images_form.append(GalleryForm())
+        # while len(images_form) < 5:
+        #     images_form.append(GalleryForm())
         # gallery_form_set = formset_factory(GalleryForm, extra=5)
         # image_form = gallery_form_set()
         return render(request, 'update_good.html', {'good_form': good_form,
@@ -101,7 +104,7 @@ def update_good(request, good_id):
         good_form = AddGoodForm(request.POST, instance=good)
         gallery_form_set = formset_factory(GalleryForm, extra=5)
         image_formset = gallery_form_set(request.POST, request.FILES)
-        if good_form.is_valid() :
+        if good_form.is_valid():
             new_good = good_form.save()
             return redirect('exchangesite:good', good_id=good_id)
 
@@ -123,7 +126,7 @@ def add_good(request):
                 if cd_image:
                     Gallery.objects.create(image=cd_image['image'],
                                            good=new_good)
-        return redirect('exchangesite:user', user_id=request.user.id)
+        return redirect('exchangesite:add_good_done')
     else:
         good_form = AddGoodForm()
         gallery_form_set = formset_factory(GalleryForm, extra=5)
@@ -131,3 +134,13 @@ def add_good(request):
 
     return render(request, 'add_good.html', {'good_form': good_form,
                                              'image_formset': image_formset})
+
+
+def add_good_done(request):
+    return render(request, 'add_good_done.html')
+
+
+def delete_good(request, good_id):
+    good = Good.objects.filter(id=good_id)
+    good.delete()
+    return render(request, 'delete_good.html')

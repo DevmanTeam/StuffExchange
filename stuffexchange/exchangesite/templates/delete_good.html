@@ -1,0 +1,6 @@
+{% extends "base_page.html" %}
+{% block title %}Успешное удаление товара{% endblock %}
+{% block content %}
+    <h1>Успешное удаление товара</h1>
+    <p>Вы успешно удалили товар. Для просмотра всех ваших остальных товаров перейдите в свой <a href="{% url 'exchangesite:user' user_id=user.id %}">профиль</a>.</p>
+{% endblock %}
