@@ -36,7 +36,7 @@ def show_user(request, user_id):
     goods = Good.objects.filter(user=user)
     goods_to_image = get_good_to_first_image_url(goods)
     context = {
-        'user': user,
+        'user_profile': user,
         'goods_to_image': goods_to_image
     }
     return render(request, 'user_goods.html', context)
