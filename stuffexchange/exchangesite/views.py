@@ -7,16 +7,21 @@ from django.forms import formset_factory
 from .models import Good, ExchangeFromUserToUser, CustomUser, Gallery
 
 
-def show_goods(request):
-    if request.user.is_authenticated:
-        goods = Good.objects.exclude(user__id=request.user.id)
-    else:
-        goods = Good.objects.all()
+def get_good_to_first_image_url(goods):
     goods_to_image = {}
     for good in goods:
         if good.images.all():
             image_url = good.images.first().image.url
             goods_to_image[good] = image_url
+    return goods_to_image
+
+
+def show_goods(request):
+    if request.user.is_authenticated:
+        goods = Good.objects.exclude(user__id=request.user.id)
+    else:
+        goods = Good.objects.all()
+    goods_to_image = get_good_to_first_image_url(goods)
     return render(request, 'goods.html', {'goods_to_image': goods_to_image})
 
 
@@ -29,7 +34,12 @@ def show_good(request, good_id):
 def show_user(request, user_id):
     user = CustomUser.objects.filter(id=user_id).first()
     goods = Good.objects.filter(user=user)
-    return render(request, 'user_goods.html', {'goods': goods, 'user': user})
+    goods_to_image = get_good_to_first_image_url(goods)
+    context = {
+        'user': user,
+        'goods_to_image': goods_to_image
+    }
+    return render(request, 'user_goods.html', context)
 
 
 def create_exchange(request, user_id, good_id): # Юра
