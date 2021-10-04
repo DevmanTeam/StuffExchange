@@ -2,8 +2,8 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+
 from .forms import LoginForm, UserRegistrationForm, AddGoodForm, GalleryForm
-from django.forms import formset_factory
 from .models import Good, ExchangeFromUserToUser, CustomUser, Gallery
 
 
@@ -31,6 +31,7 @@ def show_user(request, user_id):
     }
     return render(request, 'user_goods.html', context)
 
+
 @login_required
 def create_exchange(request, user_id, good_id):
     if request.user.is_authenticated:
@@ -43,6 +44,7 @@ def create_exchange(request, user_id, good_id):
             return redirect('exchangesite:already_exist')
             
     return redirect('exchangesite:offers')
+
 
 @login_required
 def show_offers(request):
@@ -87,59 +89,57 @@ def register(request):
         user_form = UserRegistrationForm()
     return render(request, 'register.html', {'user_form': user_form})
 
-@login_required
-def update_good(request, good_id):
-    if request.method == 'GET':
-        good = Good.objects.get(id=good_id)
-        good_form = AddGoodForm(instance=good)
-        images_form = []
-        for image in good.images.all():
-            image_form = GalleryForm(instance=image)
-            images_form.append(image_form)
-        # while len(images_form) < 5:
-        #     images_form.append(GalleryForm())
-        # gallery_form_set = formset_factory(GalleryForm, extra=5)
-        # image_form = gallery_form_set()
-        return render(request, 'update_good.html', {'good_form': good_form,
-                                                    'images_form': images_form})
-    else:
-        good = Good.objects.get(id=good_id)
-        good_form = AddGoodForm(request.POST, instance=good)
-        gallery_form_set = formset_factory(GalleryForm, extra=5)
-        image_formset = gallery_form_set(request.POST, request.FILES)
-        if good_form.is_valid():
-            new_good = good_form.save()
-            return redirect('exchangesite:good', good_id=good_id)
 
 @login_required
 def add_good(request):
     if request.method == 'POST':
-        good_form = AddGoodForm(request.POST)
-        gallery_form_set = formset_factory(GalleryForm, extra=5)
-        image_formset = gallery_form_set(request.POST, request.FILES)
-        if good_form.is_valid() and image_formset.is_valid():
+        good_form = GoodForm(request.POST)
+        if good_form.is_valid():
             cd_good = good_form.cleaned_data
-            new_good = Good.objects.create(category=cd_good['category'],
+            good = Good.objects.create(category=cd_good['category'],
                                     title=cd_good['title'],
                                     description=cd_good['description'],
                                     user=request.user)
-            cd_images = image_formset.cleaned_data
-            for cd_image in cd_images:
-                if cd_image:
-                    Gallery.objects.create(image=cd_image['image'],
-                                           good=new_good)
+            image_formset = GalleryFormSet(request.POST, request.FILES, instance=good)
+            if image_formset.is_valid():
+                image_formset.save()
         return redirect('exchangesite:add_good_done')
     else:
-        good_form = AddGoodForm()
-        gallery_form_set = formset_factory(GalleryForm, extra=5)
-        image_formset = gallery_form_set()
+        good_form = GoodForm()
+        image_formset = GalleryFormSet()
 
     return render(request, 'add_good.html', {'good_form': good_form,
-                                             'image_formset': image_formset})
+                                             'image_formset': image_formset,})
+
+
+@login_required
+def update_good(request, good_id):
+    good = Good.objects.get(id=good_id)
+    if request.method == 'GET':
+        good_form = GoodForm(instance=good)
+        image_formset = GalleryFormSet(instance=good)
+        return render(request, 'update_good.html', {'good_form': good_form,
+                                                    'image_formset': image_formset})
+    else:
+        good_form = GoodForm(request.POST, instance=good)
+        if good_form.is_valid():
+            good.save()
+            image_formset = GalleryFormSet(request.POST, request.FILES,
+                                           instance=good)
+            if image_formset.is_valid():
+                image_formset.save()
+            return redirect('exchangesite:update_good_done', good_id=good_id)
+
 
 @login_required
 def add_good_done(request):
     return render(request, 'add_good_done.html')
+
+
+@login_required
+def update_good_done(request, good_id):
+    return render(request, 'update_good_done.html')
+
 
 @login_required
 def delete_good(request, good_id):
