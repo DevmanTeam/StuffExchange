@@ -40,8 +40,8 @@ def create_exchange(request, user_id, good_id):
         good = Good.objects.filter(id=good_id).first()
         if from_user != to_user and good and from_user and to_user:
             exchange, created = ExchangeFromUserToUser.objects.get_or_create(from_user=from_user, to_user=to_user, good=good)
-            print(exchange, created)
-            return redirect('exchangesite:already_exist')
+            if not created:
+                return redirect('exchangesite:already_exist')
             
     return redirect('exchangesite:offers')
 
