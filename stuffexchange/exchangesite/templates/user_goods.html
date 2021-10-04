@@ -32,5 +32,8 @@
 
   {% endfor %}
 </div>
+{% else %}
+<h2>Вы ещё не добавляли вещей на обмен. <a href="{% url 'exchangesite:add_good' %}">Сделайте это прямо сейчас!</a></h2>
 {% endif %}
+
 {% endblock %}
