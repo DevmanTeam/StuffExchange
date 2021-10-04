@@ -4,26 +4,36 @@
 <h1 class="m-3">{{ user_profile.username }}</h1>
 <h3 class="m-3">Контакт для связи: {{ user_profile.communication_contact }}</h3>
 {% endif %}
-{% if goods_to_image %}
+{% if goods %}
 <div class="row justify-content-center">
-  {% for good, image_url in goods_to_image.items %}
+  {% for good in goods %}
   
     <div class="card col-3 m-3" style="width: 18rem;">
-      <img src="{{ image_url }}" class="card-img-top" alt="...">
+      <a href="{% url 'exchangesite:good' good_id=good.id %}" class="card-link">
+      <img src="{{ good.images.first.image.url }}" class="card-img-top" alt="...">
+      </a>
       <div class="card-body">
+        <a href="{% url 'exchangesite:good' good_id=good.id %}" class="card-link">
         <h5 class="card-title m-1">{{ good.title }}</h5>
+        </a>
         <p class="card-text m-1">{{ good.category }}</p> 
         <p class="card-text m-1">{{ good.description }}</p>
+        {% if request.user.is_authenticated %}
         {% if good.user_id != user.id %}
           <a href="{% url 'exchangesite:exchange' user_id=good.user_id good_id=good.id %}" class="btn btn-primary m-1">Предложить обмен</a>
         {% endif %}
-        <a href="{% url 'exchangesite:update_good' good_id=good.id %}" class="btn btn-primary m-1">Редактировать</a>
-        <a href="{% url 'exchangesite:delete_good' good_id=good.id %}" class="btn btn-primary m-1">Удалить</a>
-
+          {% if good.user_id == user.id %}
+          <a href="{% url 'exchangesite:add_good' %}" class="btn btn-primary m-1">Редактировать</a>
+          <a href="{% url 'exchangesite:delete_good' good_id=good.id %}" class="btn btn-primary m-1">Удалить</a>
+          {% endif %}
+        {% endif %}
       </div>
     </div>
 
   {% endfor %}
 </div>
+{% else %}
+<h2>Вы ещё не добавляли вещей на обмен. <a href="{% url 'exchangesite:add_good' %}">Сделайте это прямо сейчас!</a></h2>
 {% endif %}
+
 {% endblock %}

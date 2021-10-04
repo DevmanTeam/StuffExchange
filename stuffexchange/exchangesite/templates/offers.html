@@ -1,22 +1,61 @@
 {% extends "base_page.html" %}
 {% block content %}
 <h1 class="m-3">Предложения на обмен</h1>
-{% if offers %}
+<h2 class="m-3">Мне предлагают</h2>
+{% if request.user.is_authenticated %}
+{% if offers_to_user %}
 <div class="row justify-content-center">
-  {% for offer in offers %}
-  
+  {% for offer in offers_to_user %}
     <div class="card col-3 m-3" style="width: 18rem;">
-      <img src="https://www.ikea.com/ru/ru/images/products/brimnes-pismennyy-stol-belyy__0924822_pe788641_s5.jpg?f=xl" class="card-img-top" alt="...">
+      <a href="{% url 'exchangesite:good' good_id=offer.good.id %}" class="card-link">
+      <img src="{{ offer.good.images.first.image.url }}" class="card-img-top" alt="{{ offer.good.title }}">
+      </a>
       <div class="card-body">
+        <a href="{% url 'exchangesite:good' good_id=offer.good.id %}" class="card-link">
         <h5 class="card-title m-1">{{ offer.good.title }}</h5>
+        </a>
         <p class="card-text text-secondary m-1">{{ offer.good.category }}</p>
         <p class="card-text m-1">Описание: {{ offer.good.description }}</p>
-        <p class="card-text m-1">Обмен предлагает:<a href="#" class="card-link m-1">{{ offer.from_user }}</a></p>
+        <p class="card-text m-1">Обмен предлагает: <a href="{% url 'exchangesite:user' user_id=offer.from_user.id %}" class="card-link">{{ offer.from_user }}</a></p>
+        <p class="card-text m-1">Контакты: {{ offer.from_user.communication_contact }}</p>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+  {% else %}
+<div class="row justify-content-center">
+<p>К сожалению, вам ещё никто не предлогал обмен :(</p>
+</div>
+{% endif %}
+<hr>
+<h2 class="m-3">Я предлагаю</h2>
+{% if offers_to_user %}
+<div class="row justify-content-center">
+  {% for offer in offers_from_user %}
+    <div class="card col-3 m-3" style="width: 18rem;">
+      <a href="{% url 'exchangesite:good' good_id=offer.good.id %}" class="card-link">
+      <img src="{{ offer.good.images.first.image.url }}" class="card-img-top" alt="{{ offer.good.title }}">
+      </a>
+      <div class="card-body">
+        <a href="{% url 'exchangesite:good' good_id=offer.good.id %}" class="card-link">
+        <h5 class="card-title m-1">{{ offer.good.title }}</h5>
+        </a>
+        <p class="card-text text-secondary m-1">{{ offer.good.category }}</p>
+        <p class="card-text m-1">Описание: {{ offer.good.description }}</p>
+        <p class="card-text m-1">Владелец: <a href="{% url 'exchangesite:user' user_id=offer.good.user_id %}" class="card-link">{{ offer.to_user }}</a></p>
         <p class="card-text m-1">Контакты: {{ offer.good.user.communication_contact }}</p>
       </div>
     </div>
-
   {% endfor %}
 </div>
+  {% else %}
+<div class="row justify-content-center">
+<p>У вас нет активных предложений для обмена к кому-то. <a href="{% url 'exchangesite:add_good' %}">Сделайте это прямо сейчас!</a></p>
+</div>
+{% endif %}
+
+
+{% else %}
+<h2 class="m-3">Авторизуйтесь, чтобы увидеть предложения об обмене.</h2>
 {% endif %}
 {% endblock %}

@@ -1,20 +1,10 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-from .forms import LoginForm, UserRegistrationForm,\
-    GoodForm, GalleryFormSet
+from django.contrib.auth.decorators import login_required
 
-
+from .forms import LoginForm, UserRegistrationForm, GoodForm, GalleryFormSet
 from .models import Good, ExchangeFromUserToUser, CustomUser, Gallery
-
-
-def get_good_to_first_image_url(goods):
-    goods_to_image = {}
-    for good in goods:
-        if good.images.all():
-            image_url = good.images.first().image.url
-            goods_to_image[good] = image_url
-    return goods_to_image
 
 
 def show_goods(request):
@@ -22,8 +12,8 @@ def show_goods(request):
         goods = Good.objects.exclude(user__id=request.user.id)
     else:
         goods = Good.objects.all()
-    goods_to_image = get_good_to_first_image_url(goods)
-    return render(request, 'goods.html', {'goods_to_image': goods_to_image})
+
+    return render(request, 'goods.html', {'goods': goods})
 
 
 def show_good(request, good_id):
@@ -35,26 +25,32 @@ def show_good(request, good_id):
 def show_user(request, user_id):
     user = CustomUser.objects.filter(id=user_id).first()
     goods = Good.objects.filter(user=user)
-    goods_to_image = get_good_to_first_image_url(goods)
     context = {
         'user_profile': user,
-        'goods_to_image': goods_to_image
+        'goods': goods
     }
     return render(request, 'user_goods.html', context)
 
 
-def create_exchange(request, user_id, good_id): # Юра
-    from_user = CustomUser.objects.filter(id=request.user.id).first()
-    to_user = CustomUser.objects.filter(id=user_id).first()
-    good = Good.objects.filter(id=good_id).first()
-    exchange, created = ExchangeFromUserToUser.objects.get_or_create(from_user=from_user, to_user=to_user, good=good)
-    print(exchange, created)
+@login_required
+def create_exchange(request, user_id, good_id):
+    if request.user.is_authenticated:
+        from_user = CustomUser.objects.filter(id=request.user.id).first()
+        to_user = CustomUser.objects.filter(id=user_id).first()
+        good = Good.objects.filter(id=good_id).first()
+        if from_user != to_user and good and from_user and to_user:
+            exchange, created = ExchangeFromUserToUser.objects.get_or_create(from_user=from_user, to_user=to_user, good=good)
+            print(exchange, created)
+            return redirect('exchangesite:already_exist')
+            
     return redirect('exchangesite:offers')
 
 
-def show_offers(request): # Юра
-    offers = ExchangeFromUserToUser.objects.filter(to_user=request.user)
-    return render(request, 'offers.html', {'offers': offers})
+@login_required
+def show_offers(request):
+    offers_to_user = ExchangeFromUserToUser.objects.filter(to_user=request.user)
+    offers_from_user = ExchangeFromUserToUser.objects.filter(from_user=request.user)
+    return render(request, 'offers.html', {'offers_to_user': offers_to_user, 'offers_from_user': offers_from_user},)
 
 
 def logout_view(request):
@@ -94,6 +90,7 @@ def register(request):
     return render(request, 'register.html', {'user_form': user_form})
 
 
+@login_required
 def add_good(request):
     if request.method == 'POST':
         good_form = GoodForm(request.POST)
@@ -115,6 +112,7 @@ def add_good(request):
                                              'image_formset': image_formset,})
 
 
+@login_required
 def update_good(request, good_id):
     good = Good.objects.get(id=good_id)
     if request.method == 'GET':
@@ -133,14 +131,17 @@ def update_good(request, good_id):
             return redirect('exchangesite:update_good_done', good_id=good_id)
 
 
+@login_required
 def add_good_done(request):
     return render(request, 'add_good_done.html')
 
 
+@login_required
 def update_good_done(request, good_id):
     return render(request, 'update_good_done.html')
 
 
+@login_required
 def delete_good(request, good_id):
     good = Good.objects.filter(id=good_id)
     good.delete()
