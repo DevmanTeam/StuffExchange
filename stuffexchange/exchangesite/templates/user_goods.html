@@ -17,7 +17,7 @@
         {% if good.user_id != user.id %}
           <a href="{% url 'exchangesite:exchange' user_id=good.user_id good_id=good.id %}" class="btn btn-primary m-1">Предложить обмен</a>
         {% endif %}
-        <a href="{% url 'exchangesite:add_good' %}" class="btn btn-primary m-1">Редактировать</a>
+        <a href="{% url 'exchangesite:update_good' good_id=good.id %}" class="btn btn-primary m-1">Редактировать</a>
         <a href="{% url 'exchangesite:delete_good' good_id=good.id %}" class="btn btn-primary m-1">Удалить</a>
 
       </div>

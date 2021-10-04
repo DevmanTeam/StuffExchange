@@ -2,7 +2,7 @@ from django.urls import path
 
 from .views import show_goods, show_good, show_user, create_exchange, \
     show_offers, user_login, register, add_good, logout_view, update_good, \
-    add_good_done, delete_good
+    add_good_done, delete_good, update_good_done
 
 app_name = "exchangesite"
 
@@ -11,6 +11,7 @@ urlpatterns = [
     path('user/<int:user_id>', show_user, name='user'),
     path('good/<int:good_id>', show_good, name='good'),
     path('good/<int:good_id>/update/', update_good, name='update_good'),
+    path('good/<int:good_id>/update/done', update_good_done, name='update_good_done'),
     path('good/<int:good_id>/delete/good_id', delete_good, name='delete_good'),
     path('offers/', show_offers, name='offers'),
     path('exchange/<int:user_id>-<int:good_id>',

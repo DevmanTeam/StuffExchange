@@ -1,4 +1,6 @@
 from django import forms
+from django.forms import inlineformset_factory
+
 from .models import CustomUser, Good, Gallery
 
 
@@ -23,16 +25,17 @@ class UserRegistrationForm(forms.ModelForm):
         return cd['password2']
 
 
-class AddGoodForm(forms.ModelForm):
+class GoodForm(forms.ModelForm):
 
     class Meta:
         model = Good
         fields = ('category', 'title', 'description')
 
 
-class GalleryForm(forms.ModelForm):
-
-    class Meta:
-        model = Gallery
-        fields = ('image',)
+GalleryFormSet = inlineformset_factory(Good,
+                                       Gallery,
+                                       fields=('image',),
+                                       extra=5,
+                                       max_num=5,
+                                       can_delete=False)
 
