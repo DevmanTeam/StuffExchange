@@ -1,9 +1,9 @@
 {% extends "base_page.html" %}
 {% block content %}
 <h1 class="m-3">Предложения на обмен</h1>
+<h2 class="m-3">Мне предлагают</h2>
 {% if request.user.is_authenticated %}
 {% if offers_to_user %}
-<h2 class="m-3">Мне предлагают</h2>
 <div class="row justify-content-center">
   {% for offer in offers_to_user %}
     <div class="card col-3 m-3" style="width: 18rem;">
@@ -28,8 +28,8 @@
 </div>
 {% endif %}
 <hr>
-{% if offers_to_user %}
 <h2 class="m-3">Я предлагаю</h2>
+{% if offers_to_user %}
 <div class="row justify-content-center">
   {% for offer in offers_from_user %}
     <div class="card col-3 m-3" style="width: 18rem;">
@@ -50,7 +50,7 @@
 </div>
   {% else %}
 <div class="row justify-content-center">
-<p>К сожалению, вам ещё никто не предлогал обмен :(</p>
+<p>У вас нет активных предложений для обмена к кому-то. <a href="{% url 'exchangesite:add_good' %}">Сделайте это прямо сейчас!</a></p>
 </div>
 {% endif %}
 
